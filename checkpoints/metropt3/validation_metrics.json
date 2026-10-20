@@ -1,0 +1,11 @@
+{
+  "best": {
+    "epoch": 84,
+    "val_MAE": 0.21924547489280985,
+    "val_RMSE": 0.7875138365722081,
+    "val_RMSE_target": "raw",
+    "val_NASA": null
+  },
+  "selection_metric": "val_RMSE",
+  "n_val_samples": 648
+}

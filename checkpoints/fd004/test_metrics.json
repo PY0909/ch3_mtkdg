@@ -1,0 +1,11 @@
+{
+  "metrics": {
+    "MAE": 18.805840740280768,
+    "RMSE": 27.13094008208078,
+    "NASA": 5310.765738888296,
+    "Bias": -10.479625842263621
+  },
+  "n_test_samples": 248,
+  "evaluated_once": true,
+  "checkpoint": "validation-best"
+}

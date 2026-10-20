@@ -1,0 +1,197 @@
+{
+  "run_id": "metropt3_mtkdg_seed2026_r2_20261013_211500",
+  "dataset": "metropt3",
+  "task": "state_forecast",
+  "model_version": "mtkdg_encoder_v1+metropt_state_head_v1",
+  "seed": 2026,
+  "split_seed": 2026,
+  "split_identity": "metropt3_official_first_month_v1",
+  "split_identity_hash": "135166a669d824bb",
+  "feature_schema": {
+    "channels": [
+      "TP2",
+      "TP3",
+      "H1",
+      "DV_pressure",
+      "Reservoirs",
+      "Oil_temperature",
+      "Motor_current",
+      "COMP",
+      "DV_eletric",
+      "Towers",
+      "MPG",
+      "LPS",
+      "Pressure_switch",
+      "Oil_level",
+      "Caudal_impulses"
+    ],
+    "n_channels": 15,
+    "shape": "[N, H, C]"
+  },
+  "target_schema": {
+    "channels": [
+      "TP2",
+      "TP3",
+      "H1",
+      "DV_pressure",
+      "Reservoirs",
+      "Oil_temperature",
+      "Motor_current",
+      "COMP",
+      "DV_eletric",
+      "Towers",
+      "MPG",
+      "LPS",
+      "Pressure_switch",
+      "Oil_level",
+      "Caudal_impulses"
+    ],
+    "shape": "[N, P, C]",
+    "unit": "raw sensor unit (metrics computed after inverse transform)"
+  },
+  "normalizer_identity": {
+    "feature": "00fbc5bc91970109",
+    "target": "00fbc5bc91970109",
+    "feature_state": {
+      "name": "train_only_standard_v1",
+      "mean": [
+        0.5367803950934507,
+        8.960622382725084,
+        8.397339444776966,
+        -0.015586678239019658,
+        8.962785104329969,
+        56.6347033236981,
+        1.241261303682123,
+        0.9394428836288773,
+        0.06056849073558015,
+        0.9698010623656403,
+        0.9394428836288773,
+        5.687182228692972e-06,
+        0.9992606663102699,
+        1.0,
+        1.0
+      ],
+      "std": [
+        2.1957281180496513,
+        0.5543419513131532,
+        2.1981270683030436,
+        0.10025812673656835,
+        0.5537677403401929,
+        3.4197242765750993,
+        1.95897206974462,
+        0.2385161672254882,
+        0.23853712219609358,
+        0.17113436767673448,
+        0.2385161672254882,
+        0.01,
+        0.02718082183130813,
+        0.01,
+        0.01
+      ],
+      "n_samples": 175834,
+      "min_std": 0.01
+    },
+    "target_state": {
+      "name": "train_only_standard_v1",
+      "mean": [
+        0.5367803950934507,
+        8.960622382725084,
+        8.397339444776966,
+        -0.015586678239019658,
+        8.962785104329969,
+        56.6347033236981,
+        1.241261303682123,
+        0.9394428836288773,
+        0.06056849073558015,
+        0.9698010623656403,
+        0.9394428836288773,
+        5.687182228692972e-06,
+        0.9992606663102699,
+        1.0,
+        1.0
+      ],
+      "std": [
+        2.1957281180496513,
+        0.5543419513131532,
+        2.1981270683030436,
+        0.10025812673656835,
+        0.5537677403401929,
+        3.4197242765750993,
+        1.95897206974462,
+        0.2385161672254882,
+        0.23853712219609358,
+        0.17113436767673448,
+        0.2385161672254882,
+        0.01,
+        0.02718082183130813,
+        0.01,
+        0.01
+      ],
+      "n_samples": 175834,
+      "min_std": 0.01
+    }
+  },
+  "checkpoint_identity": {
+    "best_sha256_16": "fec30ee590414375",
+    "best_epoch": 84,
+    "best_val_RMSE": 0.7875138365722081
+  },
+  "evaluator_version": "ch3_point_evaluator_v1",
+  "sample_counts": {
+    "n_train_samples": 2928,
+    "n_val_samples": 648,
+    "n_test_samples": 21699
+  },
+  "hardware": {
+    "device": "cuda",
+    "torch_version": "2.5.1",
+    "python_version": "3.9.21",
+    "platform": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "hostname": "PC-UFIZDZTDCWXE",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Ti"
+  },
+  "training_duration_s": 52.937,
+  "inference_duration_s": 8.326,
+  "parameter_count": 41892,
+  "epochs_ran": 99,
+  "created_at": "2026-10-13T20:35:43",
+  "code_git_sha": "427dd1f57b5c4c0f06721d620fcd3d6e85070359",
+  "code_git_dirty": true,
+  "protocol_extra": {
+    "split_identity": "metropt3_official_first_month_v1",
+    "history_len": 168,
+    "pred_len": 24,
+    "stride": 60,
+    "normalizer_min_std": 0.01,
+    "n_rows_total": 1516948,
+    "gap_stats_train": {
+      "max_delta_s": 20720.0,
+      "median_delta_s": 10.0,
+      "n_gaps_gt_60s": 31,
+      "n_gaps_gt_600s": 22
+    },
+    "gap_stats_all": {
+      "max_delta_s": 172918.0,
+      "median_delta_s": 10.0,
+      "n_gaps_gt_60s": 331,
+      "n_gaps_gt_600s": 230
+    },
+    "boundaries": {
+      "month_start": "2020-02-01 00:00:00",
+      "train_val_ts": "2020-02-24 04:48:00",
+      "month_end": "2020-03-01 00:00:00",
+      "train_rows": [
+        0,
+        175834
+      ],
+      "val_rows": [
+        175834,
+        214850
+      ],
+      "test_rows": [
+        214850,
+        1516948
+      ]
+    }
+  }
+}

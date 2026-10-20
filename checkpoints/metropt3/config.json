@@ -1,0 +1,40 @@
+{
+  "dataset": "metropt3",
+  "data_root": "/home/new_work/kaf_profiti/dataset",
+  "output_dir": "results",
+  "run_id": "metropt3_mtkdg_seed2026_r2_20261013_211500",
+  "history_len": 168,
+  "pred_len": 24,
+  "stride": 60,
+  "training_cap": 125,
+  "val_ratio": 0.2,
+  "split_seed": 2026,
+  "seed": 2026,
+  "device": "cuda",
+  "epochs": 100,
+  "batch_size": 128,
+  "lr": 0.0002,
+  "weight_decay": 0.0001,
+  "patience": 15,
+  "loss": "mse",
+  "huber_beta": 1.0,
+  "lr_scheduler": "cosine",
+  "checkpoint_metric": "val_RMSE",
+  "evaluate_test": true,
+  "model": {
+    "d_model": 64,
+    "n_kernels": 4,
+    "scales": [
+      0.25,
+      0.5,
+      1.0
+    ],
+    "graph_mode": "dynamic",
+    "graph_layers": 1,
+    "graph_self_loop": true,
+    "fusion_mode": "gated",
+    "share_kernels_across_scales": false,
+    "dropout": 0.1
+  },
+  "task": "state_forecast"
+}

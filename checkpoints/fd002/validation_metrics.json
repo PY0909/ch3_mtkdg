@@ -1,0 +1,12 @@
+{
+  "best": {
+    "epoch": 15,
+    "val_MAE": 9.364687667711738,
+    "val_RMSE": 12.9839745296777,
+    "val_RMSE_target": "capped(raw cycle)",
+    "val_NASA": 25120.512000591134,
+    "val_RMSE_rawtarget": 32.01241857315627
+  },
+  "selection_metric": "val_RMSE",
+  "n_val_samples": 8426
+}
