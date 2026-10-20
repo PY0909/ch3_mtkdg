@@ -214,10 +214,12 @@ class BaselinePointModel(nn.Module):
         history_len: int = 50,
         rul_mean: float = 0.0,
         rul_std: float = 1.0,
+        state_head_mode: str = "direct",
     ):
         super().__init__()
         if task not in ("state_forecast", "rul_regression"):
             raise ValueError(f"unknown task: {task}")
+        self.state_head_mode = state_head_mode
         if encoder_name not in BASELINE_NAMES:
             raise ValueError(f"unknown baseline: {encoder_name}, choose from {BASELINE_NAMES}")
         self.task = task
@@ -234,7 +236,7 @@ class BaselinePointModel(nn.Module):
         else:
             self.encoder = ITransformerEncoder(n_channels, d_model)
         if task == "state_forecast":
-            self.head = StateHead(d_model, n_channels, pred_len)
+            self.head = StateHead(d_model, n_channels, pred_len, mode=state_head_mode)
             self.head_version = STATE_HEAD_VERSION
         else:
             self.head = RULHead(d_model, rul_mean, rul_std)
@@ -243,7 +245,10 @@ class BaselinePointModel(nn.Module):
     def forward(self, x, t=None, mask=None, condition=None) -> torch.Tensor:
         z = self.encoder(x, t, mask, condition)                 # [B,C,D]
         if self.task == "state_forecast":
-            return self.head(z)
+            out = self.head(z)
+            if self.state_head_mode == "delta":
+                out = out + x[:, -1, :].unsqueeze(1)             # persistence-skip，与 MTK-DG 头一致
+            return out
         return self.head(z, None)
 
     def count_parameters(self) -> int:

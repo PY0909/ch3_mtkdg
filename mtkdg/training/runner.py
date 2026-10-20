@@ -94,6 +94,7 @@ class TrainingRunner:
                 history_len=cfg.history_len,
                 rul_mean=bundle.rul_mean,
                 rul_std=bundle.rul_std,
+                state_head_mode=cfg.model.state_head_mode,
             )
         else:
             raise ValueError(f"unknown model: {cfg.model_name}")
