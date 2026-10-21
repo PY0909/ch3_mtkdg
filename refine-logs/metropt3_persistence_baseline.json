@@ -1,0 +1,24 @@
+{
+  "val": {
+    "n_windows": 648,
+    "overall_MAE": 0.26694589853286743,
+    "overall_RMSE": 1.1985794305801392,
+    "per_horizon_MAE_first_last": [
+      0.037019044160842896,
+      0.4010223150253296
+    ]
+  },
+  "test": {
+    "n_windows": 21699,
+    "overall_MAE": 0.48252150416374207,
+    "overall_RMSE": 1.668254017829895,
+    "per_horizon_MAE_first_last": [
+      0.065829798579216,
+      0.7490289211273193
+    ]
+  },
+  "test_train_mean_baseline": {
+    "overall_MAE": 1.0803180932998657,
+    "overall_RMSE": 2.8605778217315674
+  }
+}

@@ -93,3 +93,18 @@ Test 指标（FD: raw cycle MAE/RMSE/NASA；MetroPT: raw unit overall_MAE/overal
 5. 单 seed 2026；FD004 上 MTK-DG vs GRU 需补 seed 定论。
 
 状态：V2b/V3/V4/V5 暂停——在 V1 主协议定稿后重新设计（旧口径下的结果不再可比）。
+
+## 3-seed 同硬件矩阵（RTX 3090，2026-10-20 18:17 → 10-21 08:28，126 run + 45 稳健性评估，0 FAIL）
+
+脚本：`run_seed_matrix.sh`（主表+MetroPT MC-Graph）、`run_ablations.sh`（结构消融+V3/V4）、
+`run_mcgraph_fix.sh`（FD MC-Graph，修复原脚本 rid 漏拼配置名导致的 skip）、`run_metropt_delta.sh`
+（baseline delta 头）、`run_robustness.sh`（eval_robustness）、`run_seed2026_baselines.sh`（tcn/gru seed2026 同硬件）。
+汇总：`python scripts/aggregate_3seed.py results` → `CH3_3SEED_AGGREGATE.md`；主结论见 `CH3_MAIN_RESULTS.md`。
+
+关键结论（详见 CH3_MAIN_RESULTS.md）：
+1. FD004 MTK-DG vs GRU 已裁决（ΔMAE −1.21、ΔRMSE −2.97，3 seeds 同向）。
+2. MetroPT 零参数 persistence（0.4825/1.6683）优于所有 direct 头模型；delta 头下 MTK-DG（1.271）是唯一优于 persistence 的模型。
+   → MetroPT 主协议建议改 delta 头（post-first-look 协议修订，须声明）。
+3. 消融：图分支有用（none 同向恶化），dynamic vs static 噪声内；gated vs add 无差别。
+4. MC-Graph：稳健性约 6× 改善（FD time_block@0.3 +20~25% → +3~5%），consistency 项在 FD002 有 +1.4 RMSE 干净代价。
+5. 同硬件复跑：TCN/MTK-DG 与原机差 ≤0.02，GRU 差约 1 RMSE（cuDNN RNN 非确定性）。
