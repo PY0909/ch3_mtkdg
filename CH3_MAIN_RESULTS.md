@@ -12,10 +12,9 @@
 
 ## 1. FD002 / FD004 主表（Test，raw cycle，3 seeds）
 
-> 2026-10-27 补齐批后为**六模型全 3-seed** 表：MTK-DG/GRU/TCN 为 20261020 批（原 3090），
-> PatchTST/TimesNet/iTransformer 为 20261027_extra 批（另一张 3090）。跨批合法性：fd002 MTK-DG
-> seed2026 跨批对照**逐位一致**（16.4234/24.8765/4596.19），且新基线 seed2026 与原单 seed（§6）一致
-> （如 TimesNet FD004 25.25/34.62 逐位相同）；模型间差距（≥3.8 RMSE）远超 seed 噪声（±0.5）与批次效应。
+> 2026-10-27 补齐批后为**六模型全 3-seed** 表。三批（20261020 / 20261026 / 20261027_extra）均产出自
+> **同一 RTX 3090 实例**（AutoDL 关机重开不换宿主，端口 43676 未变）。批间复现校验：fd002 MTK-DG
+> seed2026 相隔一周重跑**逐位一致**（16.4234/24.8765/4596.19，含指数放大的 NASA 分数），管线完全确定。
 
 | 数据集   | 模型             | 参数量    | MAE            | RMSE           | NASA             |
 | ----- | -------------- | ------ | -------------- | -------------- | ---------------- |
@@ -82,9 +81,9 @@
 
 ## 2A. MetroPT delta 头补跑批（2026-10-26，**论文口径**）
 
-§3/§4 的 MetroPT 列是 direct 头批次（2026-10-20）产出，与论文"direct 结果不放"口径冲突；2026-10-26 在另一张 RTX 3090 上以 `--state-head-mode delta` 重跑全部消融变体与 G1–G4（`dl*` 变体名，批内配对，**不与 direct 批混表**）。脚本 `scripts/run_metropt_delta_family.sh`，聚合 `scripts/aggregate_delta_family.py`（commit `6abeca5`），明细 `refine-logs/CH3_DELTA_FAMILY_AGGREGATE.md`。
+§3/§4 的 MetroPT 列是 direct 头批次（2026-10-20）产出，与论文"direct 结果不放"口径冲突；2026-10-26 在同一 RTX 3090 实例上以 `--state-head-mode delta` 重跑全部消融变体与 G1–G4（`dl*` 变体名，批内配对，**不与 direct 批混表**）。脚本 `scripts/run_metropt_delta_family.sh`，聚合 `scripts/aggregate_delta_family.py`（commit `6abeca5`），明细 `refine-logs/CH3_DELTA_FAMILY_AGGREGATE.md`。
 
-**跨卡复现验证**：本批 A0（dla0）= 0.4523±0.0185 / 1.2708±0.0284，与 20261020 批 v4deltaskip **逐位一致**——MTK-DG 在不同 3090 卡间完全可复现（无 cuDNN 非确定性问题），故本批消融可与主表 MTK-DG 直接衔接。
+**批间复现验证**：本批 A0（dla0）= 0.4523±0.0185 / 1.2708±0.0284，与 20261020 批 v4deltaskip **逐位一致**（同一实例相隔六天的两次独立训练）——管线完全确定、无 cuDNN 非确定性问题，故本批消融可与主表 MTK-DG 直接衔接。
 
 ### 2A.1 结构消融（delta 头，ΔoRMSE vs dla0，逐 seed 配对）
 
@@ -173,7 +172,7 @@
 ## 5. 口径备注
 
 1. 全部 run：engine-level / 首月划分、train-only 归一化、validation-best 选型、恢复后一次性 test；artifact 含 manifest（scaler identity + git SHA），位于远程 `results/{dataset}/{run_id}/`（本地同步了除 `.pt/.npz` 外的全部文件）。
-2. FD 主表为两批合并：MTK-DG/GRU/TCN 为 2026-10-20 批（原 3090，126 run 矩阵），PatchTST/TimesNet/iTransformer 为 2026-10-27 批（另一张 3090，`scripts/run_fd_baselines_extra.sh`，18 run + 1 跨批对照）。跨批合法性证据见 §1 表头注（fd002 MTK-DG seed2026 两批逐位一致；新基线 seed2026 与原单 seed 一致）。同硬件复跑验证：MTK-DG 与 TCN 的 seed 2026 与原机（4060 Ti）差 ≤0.02；**GRU 跨 GPU 差约 1 RMSE**（cuDNN RNN 非确定性），故原机 GRU 数值不与本页混用。MetroPT §2A 批（2026-10-26）亦为另一张 3090，dla0 与 20261020 批 v4deltaskip 逐位一致，批内配对、不与 direct 批混表。
+2. 全部 3-seed run（20261020 / 20261026 / 20261027_extra 三批）均在**同一 RTX 3090 实例**上产出；批间以 fd002 MTK-DG seed2026 对照验证逐位一致（§1 表头注）。与更早原机（4060 Ti）的验证：MTK-DG 与 TCN 的 seed 2026 跨机差 ≤0.02；**GRU 跨 GPU 差约 1 RMSE**（cuDNN RNN 非确定性），故原机数值（含 §6 附录单 seed 表）不与本页混用。MetroPT §2A delta 批与 direct 批虽同实例，但因输出形式协议修订，仍批内配对、不混表。
 3. NASA 的 seed 方差极大（GRU FD004 ±6,922），只作参考并列报告，不用于排名。
 4. PatchTST（H=50 下 7-patch）与 TimesNet（top-1 周期单 block）为统一协议下的简化实现，结论限定于该范围。
 5. 稳健性评估的 corruption 协议（channel_dropout / time_block，rate 0.1/0.2/0.3，3 corruption seeds）与训练期 robust-train 的 corruption 同源但 seed 独立，详见 `scripts/eval_robustness.py`。channel_dropout 整通道置零同时置零掩码，对 delta 头额外摧毁持久性锚 x_last（§2A.2 解读 1）。
