@@ -4,6 +4,8 @@
 #       补 seed 不改变排名，纯呈现层对称性）。
 # 命令模板复刻 run_v1_baselines.sh（V1 协议）；另含 1 个跨批对照 run：
 #   fd002 mtkdg seed2026 在本卡重跑（xbatchctrl 变体，不入任何表），用于验证与 20261020 批逐位一致。
+# 注：首跑 TS=20261027_b3，因聚合脚本 RID_RE 的 ts 段只接受纯字母（[a-z]+），
+#     跑完后全部目录已重命名为 _20261027_extra（本文件 TS 同步更正）。
 # 可恢复：已有 test_metrics.json 的 run 自动跳过。
 set -u
 cd /root/autodl-tmp/ch3_mtkdg
@@ -11,7 +13,7 @@ source /root/miniconda3/etc/profile.d/conda.sh
 conda activate kaf_profiti
 export OMP_NUM_THREADS=2
 DATA=/root/autodl-tmp/kst_light_v2/dataset
-TS=20261027_b3
+TS=20261027_extra
 
 # 跨批对照（~5 min）：与 results/fd002/fd002_mtkdg_a0ctrl_seed2026_20261020_abl 比对
 rid="fd002_mtkdg_xbatchctrl_seed2026_${TS}"

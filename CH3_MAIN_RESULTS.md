@@ -12,25 +12,44 @@
 
 ## 1. FD002 / FD004 主表（Test，raw cycle，3 seeds）
 
-| 数据集   | 模型         | 参数量    | MAE            | RMSE           | NASA          |
-| ----- | ---------- | ------ | -------------- | -------------- | ------------- |
-| FD002 | **MTK-DG** | 40,940 | **16.37±0.15** | **24.75±0.29** | **4,596±162** |
-| FD002 | GRU        | 56,449 | 19.31±0.16     | 29.29±0.45     | 13,451±2,852  |
-| FD002 | TCN        | 56,449 | 20.52±0.22     | 30.01±0.50     | 18,845±3,911  |
-| FD004 | **MTK-DG** | 40,940 | **18.42±0.38** | **26.50±0.81** | **4,937±541** |
-| FD004 | GRU        | 56,449 | 19.64±0.19     | 29.47±0.87     | 17,174±6,922  |
-| FD004 | TCN        | 56,449 | 22.21±0.25     | 30.13±0.17     | 7,763±391     |
+> 2026-10-27 补齐批后为**六模型全 3-seed** 表：MTK-DG/GRU/TCN 为 20261020 批（原 3090），
+> PatchTST/TimesNet/iTransformer 为 20261027_extra 批（另一张 3090）。跨批合法性：fd002 MTK-DG
+> seed2026 跨批对照**逐位一致**（16.4234/24.8765/4596.19），且新基线 seed2026 与原单 seed（§6）一致
+> （如 TimesNet FD004 25.25/34.62 逐位相同）；模型间差距（≥3.8 RMSE）远超 seed 噪声（±0.5）与批次效应。
 
-配对差值 Δ(MTK-DG − baseline)：
+| 数据集   | 模型             | 参数量    | MAE            | RMSE           | NASA             |
+| ----- | -------------- | ------ | -------------- | -------------- | ---------------- |
+| FD002 | **MTK-DG**     | 40,940 | **16.37±0.15** | **24.75±0.29** | **4,596±162**    |
+| FD002 | GRU            | 56,449 | 19.31±0.16     | 29.29±0.45     | 13,451±2,852     |
+| FD002 | TCN            | 56,449 | 20.52±0.22     | 30.01±0.50     | 18,845±3,911     |
+| FD002 | PatchTST       | —      | 21.93±0.22     | 33.61±0.71     | 63,532±25,246    |
+| FD002 | iTransformer   | —      | 26.54±0.44     | 36.55±0.72     | 55,031±11,829    |
+| FD002 | TimesNet       | —      | 25.24±0.25     | 37.43±0.45     | 149,912±30,912   |
+| FD004 | **MTK-DG**     | 40,940 | **18.42±0.38** | **26.50±0.81** | **4,937±541**    |
+| FD004 | GRU            | 56,449 | 19.64±0.19     | 29.47±0.87     | 17,174±6,922     |
+| FD004 | PatchTST       | —      | 20.29±0.20     | 30.26±1.04     | 47,116±49,140    |
+| FD004 | TCN            | 56,449 | 22.21±0.25     | 30.13±0.17     | 7,763±391        |
+| FD004 | TimesNet       | —      | 25.23±0.32     | 34.85±0.34     | 31,630±2,923     |
+| FD004 | iTransformer   | —      | 28.29±0.15     | 36.09±0.32     | 21,242±679       |
 
-| 数据集   | 对比     | ΔMAE       | ΔRMSE      | 结论                                |
-| ----- | ------ | ---------- | ---------- | --------------------------------- |
-| FD002 | vs GRU | −2.94±0.02 | −4.54±0.46 | 3 seeds 同向，显著                     |
-| FD002 | vs TCN | −4.15±0.28 | −5.26±0.45 | 3 seeds 同向，显著                     |
-| FD004 | vs GRU | −1.21±0.29 | −2.97±0.14 | 3 seeds 同向，**原"并列"已裁决为 MTK-DG 优** |
-| FD004 | vs TCN | −3.78±0.27 | −3.63±0.64 | 3 seeds 同向，显著                     |
+（表按 RMSE 排序展示；PatchTST/TimesNet/iTransformer 的参数量见各 run manifest。）
 
-PatchTST / TimesNet / iTransformer 在单 seed 下已大幅落后（§6），未补 seed。
+配对差值 Δ(MTK-DG − baseline)，逐 seed 相减（全部 10 组 **3/3 同向**）：
+
+| 数据集   | 对比               | ΔMAE            | ΔRMSE           |
+| ----- | ---------------- | --------------- | --------------- |
+| FD002 | vs GRU           | −2.94±0.02      | −4.54±0.46      |
+| FD002 | vs TCN           | −4.15±0.28      | −5.26±0.45      |
+| FD002 | vs PatchTST      | −5.56          | −8.86±0.47      |
+| FD002 | vs TimesNet      | −8.87          | −12.68±0.72     |
+| FD002 | vs iTransformer  | −10.17         | −11.79±1.00     |
+| FD004 | vs GRU           | −1.21±0.29      | −2.97±0.14      |
+| FD004 | vs TCN           | −3.78±0.27      | −3.63±0.64      |
+| FD004 | vs PatchTST      | −1.87          | −3.76±0.46      |
+| FD004 | vs TimesNet      | −6.81          | −8.36±0.82      |
+| FD004 | vs iTransformer  | −9.87          | −9.60±0.63      |
+
+（vs PatchTST/TimesNet/iTransformer 的 ΔMAE 为逐 seed 均值，明细见 `refine-logs/CH3_3SEED_AGGREGATE.md` 与各 run `test_metrics.json`。）
 
 ## 2. MetroPT-3（Test，raw unit overall，3 seeds）
 
@@ -154,7 +173,7 @@ PatchTST / TimesNet / iTransformer 在单 seed 下已大幅落后（§6），未
 ## 5. 口径备注
 
 1. 全部 run：engine-level / 首月划分、train-only 归一化、validation-best 选型、恢复后一次性 test；artifact 含 manifest（scaler identity + git SHA），位于远程 `results/{dataset}/{run_id}/`（本地同步了除 `.pt/.npz` 外的全部文件）。
-2. 主表、消融、MC-Graph 全部为 **同一张 RTX 3090** 上的 3 seeds。同硬件复跑验证：MTK-DG 与 TCN 的 seed 2026 与原机（4060 Ti）差 ≤0.02；**GRU 跨 GPU 差约 1 RMSE**（cuDNN RNN 非确定性），故原机 GRU 数值不与本页混用。§2A 补跑批（2026-10-26）在**另一张 RTX 3090** 上产出，dla0 与 20261020 批 v4deltaskip 逐位一致，批内配对、不与 direct 批混表。
+2. FD 主表为两批合并：MTK-DG/GRU/TCN 为 2026-10-20 批（原 3090，126 run 矩阵），PatchTST/TimesNet/iTransformer 为 2026-10-27 批（另一张 3090，`scripts/run_fd_baselines_extra.sh`，18 run + 1 跨批对照）。跨批合法性证据见 §1 表头注（fd002 MTK-DG seed2026 两批逐位一致；新基线 seed2026 与原单 seed 一致）。同硬件复跑验证：MTK-DG 与 TCN 的 seed 2026 与原机（4060 Ti）差 ≤0.02；**GRU 跨 GPU 差约 1 RMSE**（cuDNN RNN 非确定性），故原机 GRU 数值不与本页混用。MetroPT §2A 批（2026-10-26）亦为另一张 3090，dla0 与 20261020 批 v4deltaskip 逐位一致，批内配对、不与 direct 批混表。
 3. NASA 的 seed 方差极大（GRU FD004 ±6,922），只作参考并列报告，不用于排名。
 4. PatchTST（H=50 下 7-patch）与 TimesNet（top-1 周期单 block）为统一协议下的简化实现，结论限定于该范围。
 5. 稳健性评估的 corruption 协议（channel_dropout / time_block，rate 0.1/0.2/0.3，3 corruption seeds）与训练期 robust-train 的 corruption 同源但 seed 独立，详见 `scripts/eval_robustness.py`。channel_dropout 整通道置零同时置零掩码，对 delta 头额外摧毁持久性锚 x_last（§2A.2 解读 1）。
